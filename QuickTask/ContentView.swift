@@ -28,18 +28,21 @@ struct ContentView: View {
                     .foregroundColor(.gray)
             } else {
                 List {
-                    ForEach(tasks.indices, id: \.self) { index in
+                    ForEach(Array(tasks.enumerated()), id: \.element.id) { index, task in
                         HStack {
-                            Image(systemName: tasks[index].isCompleted ? "checkmark.circle.fill" : "circle")
+                            Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                                 .onTapGesture {
                                     tasks[index].isCompleted.toggle()
                                 }
-                                .foregroundColor(tasks[index].isCompleted ? .green : .gray)
+                                .foregroundColor(task.isCompleted ? .green : .gray)
                             
-                            Text(tasks[index].title)
-                                .strikethrough(tasks[index].isCompleted)
-                                .foregroundColor(tasks[index].isCompleted ? .gray : .primary)
+                            Text(task.title)
+                                .strikethrough(task.isCompleted)
+                                .foregroundColor(task.isCompleted ? .gray : .primary)
                         }
+                    }
+                    .onDelete { indexSet in
+                        tasks.remove(atOffsets: indexSet)
                     }
                 }
                 .listStyle(.plain)
