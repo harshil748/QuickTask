@@ -6,13 +6,35 @@
 //
 
 import SwiftUI
-struct Task: Identifiable {
-    let id = UUID()
+struct Task: Identifiable, Codable {
+    let id: UUID
     var title: String
     var isCompleted: Bool
+    
+    init(id: UUID = UUID(), title: String, isCompleted: Bool) {
+        self.id = id
+        self.title = title
+        self.isCompleted = isCompleted
+    }
 }
 struct ContentView: View {
-    @State private var tasks: [Task] = []
+    func saveTasks() {
+        if let encoded = try? JSONEncoder().encode(tasks) {
+            UserDefaults.standard.set(encoded, forKey: "tasks")
+        }
+    }
+    
+    func loadTasks() {
+        if let data = UserDefaults.standard.data(forKey: "tasks"),
+           let decoded = try? JSONDecoder().decode([Task].self, from: data) {
+            tasks = decoded
+        }
+    }
+    @State private var tasks: [Task] = [] {
+        didSet {
+            saveTasks()
+        }
+    }
     @State private var isShowingAddTask = false
     @State private var newTaskTitle = ""
     
@@ -90,6 +112,9 @@ struct ContentView: View {
             Spacer()
         }
         .padding()
+        .onAppear {
+            loadTasks()
+        }
     }
 }
 
