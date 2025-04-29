@@ -107,14 +107,14 @@ struct ContentView: View {
                     .padding(.horizontal)
                 }
                 .padding()
+                .onAppear {
+                    loadTasks()
+                }
             }
             
             Spacer()
         }
         .padding()
-        .onAppear {
-            loadTasks()
-        }
     }
 }
 
